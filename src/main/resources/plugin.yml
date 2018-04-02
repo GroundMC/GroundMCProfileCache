@@ -1,0 +1,8 @@
+name: GroundMCProfileCache
+version: 1.0
+author: GiantTree
+main: net.groundmc.profilecache.Main
+depend: [GroundMCKotlinLoader]
+
+commands:
+  usercache:

@@ -1,0 +1,16 @@
+# Database connection information
+# Uses an in-memory database by default.
+# This database is saved in a file next to this config file by default.
+#
+# The following substitutions are available:
+#
+# $dataFolder     -     Is replaced with the absolute path of the data folder of this plugin at runtime
+#
+# The default driver is for the SQLite database file.
+# To use MySQL, use com.mysql.jdbc.Driver and fill in the url as described here:
+# https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-reference-configuration-properties.html
+database:
+  username:
+  driver: org.sqlite.JDBC
+  password:
+  url: jdbc:sqlite:$dataFolder/database
