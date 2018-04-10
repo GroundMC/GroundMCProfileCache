@@ -6,7 +6,7 @@
 
     <groupId>net.groundmc</groupId>
     <artifactId>GroundMCProfileCache</artifactId>
-    <version>1.1</version>
+    <version>1.1.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -95,6 +95,9 @@
                 <configuration>
                     <minimizeJar>true</minimizeJar>
                     <finalName>GroundMCProfileCache</finalName>
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <shadedClassifierName>production
+                    </shadedClassifierName>
                 </configuration>
                 <executions>
                     <execution>
