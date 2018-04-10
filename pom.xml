@@ -93,6 +93,7 @@
                     <include>**/pom.xml</include>
                 </includes>
                 <filtering>true</filtering>
+                <directory>/target/</directory>
             </resource>
         </resources>
         <plugins>
