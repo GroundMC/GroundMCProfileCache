@@ -31,8 +31,8 @@
             <url>https://dl.bintray.com/kotlin/exposed</url>
         </repository>
         <repository>
-            <id>local-jenkins</id>
-            <url>https://ci.groundmc.net/plugin/repository/everything/</url>
+            <id>groundmc-releases</id>
+            <url>https://repo.groundmc.net/repository/groundmc-central/</url>
         </repository>
         <repository>
             <id>destroystokyo-repo</id>
