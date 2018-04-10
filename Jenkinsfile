@@ -28,7 +28,7 @@ pipeline {
     stage('Publish') {
     steps {
       withMaven(globalMavenSettingsConfig: '570edf3b-0bed-464d-bec1-0021ced53567', maven: 'Maven3') {
-        sh 'mvn clean deploy -Dmaven.test.skip=true -Dversion=1.0-b${env.BUILD_NUMBER}'
+        sh 'mvn clean deploy -Dmaven.test.skip=true -Dversion=1.0-b${BUILD_NUMBER}'
       }
      }
     }
