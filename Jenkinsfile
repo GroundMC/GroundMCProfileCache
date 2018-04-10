@@ -26,12 +26,14 @@ pipeline {
       }
     }
     stage('Publish') {
+    steps {
       withMaven(
         maven: 'Maven3',
         mavenSettingsConfig: '570edf3b-0bed-464d-bec1-0021ced53567'
       ) {
         sh 'mvn clean deploy -Dmaven.test.skip=true'
       }
+     }
     }
   }
   post {
