@@ -184,7 +184,7 @@
                 </executions>
                 <configuration>
                     <serverId>groundmc-releases</serverId>
-                    <nexusUrl>https://repo.groundmc.net/nexus/</nexusUrl>
+                    <nexusUrl>https://repo.groundmc.net/</nexusUrl>
                 </configuration>
             </plugin>
         </plugins>
