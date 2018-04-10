@@ -28,7 +28,7 @@ object UserCacheTable : Table("ProfileCache") {
 
     val id = uuid("id").index()
 
-    val profile = profile("profile", 4096)
+    val properties = properties("profile", 4096)
 
     private val expire = datetime("expire").index()
 
@@ -90,13 +90,13 @@ object UserCacheTable : Table("ProfileCache") {
                     insert {
                         it[id] = uuid
                         it[name] = username
-                        it[profile] = playerProfile.properties
+                        it[properties] = playerProfile.properties
                         it[expire] = DateTime.now().plusHours(2)
                     }
                 } else {
                     update({ id eq uuid }) {
                         it[name] = username
-                        it[profile] = playerProfile.properties
+                        it[properties] = playerProfile.properties
                         it[expire] = DateTime.now().plusHours(2)
                     }
                 }
@@ -108,7 +108,7 @@ object UserCacheTable : Table("ProfileCache") {
         }
     }
 
-    private fun profile(name: String, length: Int, collate: String? = null) = registerColumn<Set<ProfileProperty>>(name, PropertySetColumnType(length, collate))
+    private fun properties(name: String, length: Int, collate: String? = null) = registerColumn<Set<ProfileProperty>>(name, PropertySetColumnType(length, collate))
 
     class PropertySetColumnType(length: Int, collate: String?) : VarCharColumnType(length, collate) {
         override fun nonNullValueToString(value: Any): String {

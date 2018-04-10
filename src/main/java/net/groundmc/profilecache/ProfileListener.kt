@@ -14,7 +14,7 @@ object ProfileListener : Listener {
     fun lookupCachedProfile(event: PreLookupProfileEvent) {
         val property = UserCacheTable.forName(event.name) ?: return
         event.uuid = property[UserCacheTable.id]
-        event.profileProperties = property[UserCacheTable.profile]
+        event.profileProperties = property[UserCacheTable.properties]
     }
 
     @EventHandler
@@ -24,7 +24,7 @@ object ProfileListener : Listener {
         } else {
             UserCacheTable.forId(event.playerProfile.id!!) ?: return
         }
-        event.playerProfile.setProperties(property[UserCacheTable.profile])
+        event.playerProfile.setProperties(property[UserCacheTable.properties])
     }
 
     @EventHandler
