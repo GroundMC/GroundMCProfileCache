@@ -19,10 +19,6 @@
             <id>groundmc-snapshots</id>
             <url>https://repo.groundmc.net/repository/groundmc-snapshots</url>
         </snapshotRepository>
-        <repository>
-            <id>groundmc-releases</id>
-            <url>https://repo.groundmc.net/repository/groundmc-releases</url>
-        </repository>
     </distributionManagement>
 
     <repositories>
@@ -187,7 +183,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <serverId>groundmc</serverId>
+                    <serverId>groundmc-releases</serverId>
                     <nexusUrl>https://repo.groundmc.net/</nexusUrl>
                 </configuration>
             </plugin>
