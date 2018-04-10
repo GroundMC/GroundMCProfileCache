@@ -22,7 +22,12 @@ pipeline {
     }
     stage('Package') {
       steps {
-        sh 'mvn package'
+        sh 'mvn package -Dmaven.test.skip=true'
+      }
+    }
+    stage('Publish') {
+      steps {
+        sh 'mvn clean deploy -Dmaven.test.skip=true'
       }
     }
   }
