@@ -6,20 +6,13 @@
 
     <groupId>net.groundmc</groupId>
     <artifactId>GroundMCProfileCache</artifactId>
-    <version>1.1.1</version>
+    <version>1.1-b${env.BUILD_NUMBER}</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.version>1.2.31</kotlin.version>
         <experimentalCoroutines>enable</experimentalCoroutines>
     </properties>
-
-    <distributionManagement>
-        <repository>
-            <id>groundmc-releases</id>
-            <url>https://repo.groundmc.net/repository/groundmc-releases</url>
-        </repository>
-    </distributionManagement>
 
     <repositories>
         <repository>
@@ -29,10 +22,6 @@
             <id>bintray-kotlin-exposed</id>
             <name>bintray</name>
             <url>https://dl.bintray.com/kotlin/exposed</url>
-        </repository>
-        <repository>
-            <id>groundmc-releases</id>
-            <url>https://repo.groundmc.net/repository/groundmc-central/</url>
         </repository>
         <repository>
             <id>destroystokyo-repo</id>
@@ -163,33 +152,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.8</version>
-                <executions>
-                    <execution>
-                        <id>default-deploy</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <serverId>groundmc-releases</serverId>
-                    <nexusUrl>https://repo.groundmc.net/</nexusUrl>
-                    <skipStaging>true</skipStaging>
-                </configuration>
             </plugin>
         </plugins>
     </build>
