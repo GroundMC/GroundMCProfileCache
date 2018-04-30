@@ -10,7 +10,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>1.2.40</kotlin.version>
+        <kotlin.version>1.2.41</kotlin.version>
         <experimentalCoroutines>enable</experimentalCoroutines>
     </properties>
 
@@ -75,6 +75,7 @@
     </dependencies>
 
     <build>
+        <finalName>GroundMCProfileCache</finalName>
         <testSourceDirectory>src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
@@ -83,10 +84,6 @@
                 <version>3.1.0</version>
                 <configuration>
                     <minimizeJar>true</minimizeJar>
-                    <finalName>GroundMCProfileCache</finalName>
-                    <shadedArtifactAttached>true</shadedArtifactAttached>
-                    <shadedClassifierName>production
-                    </shadedClassifierName>
                 </configuration>
                 <executions>
                     <execution>
