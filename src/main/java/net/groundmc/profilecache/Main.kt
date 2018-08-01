@@ -1,5 +1,6 @@
 package net.groundmc.profilecache
 
+import com.zaxxer.hikari.HikariDataSource
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
@@ -12,7 +13,12 @@ class Main : JavaPlugin() {
 
     override fun onEnable() {
         saveDefaultConfig()
-        Database.connect(config.getString("database.url").replace("\$dataFolder", dataFolder.absolutePath), config.getString("database.driver"), config.getString("database.username", ""), config.getString("database.password", ""))
+        Database.connect(HikariDataSource().apply {
+            jdbcUrl = config.getString("database.url").replace("\$dataFolder", dataFolder.absolutePath)
+            driverClassName = config.getString("database.driver")
+            username = config.getString("database.username", "root")
+            password = config.getString("database.password", "")
+        })
         TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
         transaction {
             SchemaUtils.createMissingTablesAndColumns(UserCacheTable)
