@@ -77,36 +77,35 @@ object UserCacheTable : Table("ProfileCache") {
         return@transaction select { id eq uuid }.firstOrNull()
     }
 
-    fun cacheProfile(playerProfile: PlayerProfile) {
-        async {
-            val uuid = playerProfile.id
-            val username = playerProfile.name
-            if (uuid == null || username == null) return@async
-            if (!playerProfile.hasTextures()) {
-                return@async
-            }
-            transaction {
-                if (anyForId(uuid) == null) {
-                    insert {
-                        it[id] = uuid
-                        it[name] = username
-                        it[properties] = playerProfile.properties
-                        it[expire] = DateTime.now().plusHours(2)
-                    }
-                } else {
-                    update({ id eq uuid }) {
-                        it[name] = username
-                        it[properties] = playerProfile.properties
-                        it[expire] = DateTime.now().plusHours(2)
-                    }
+    fun cacheProfile(playerProfile: PlayerProfile) =
+            async {
+                val uuid = playerProfile.id
+                val username = playerProfile.name
+                if (uuid == null || username == null) return@async
+                if (!playerProfile.hasTextures()) {
+                    return@async
                 }
-                Users.update({ Users.id eq uuid }) {
-                    it[Users.lastName] = username
+                transaction {
+                    if (anyForId(uuid) == null) {
+                        insert {
+                            it[id] = uuid
+                            it[name] = username
+                            it[properties] = playerProfile.properties
+                            it[expire] = DateTime.now().plusHours(2)
+                        }
+                    } else {
+                        update({ id eq uuid }) {
+                            it[name] = username
+                            it[properties] = playerProfile.properties
+                            it[expire] = DateTime.now().plusHours(2)
+                        }
+                    }
+                    Users.update({ Users.id eq uuid }) {
+                        it[Users.lastName] = username
+                    }
+                    commit()
                 }
-                commit()
             }
-        }
-    }
 
     private fun properties(name: String, length: Int, collate: String? = null) = registerColumn<Set<ProfileProperty>>(name, PropertySetColumnType(length, collate))
 
