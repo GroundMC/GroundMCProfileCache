@@ -17,6 +17,7 @@ import org.joda.time.DateTime
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import java.util.logging.Logger
 
 object UserCacheTable : Table("ProfileCache") {
 
@@ -74,7 +75,7 @@ object UserCacheTable : Table("ProfileCache") {
                     }
 
     private fun anyForId(uuid: UUID) = transaction {
-        return@transaction select { id eq uuid }.firstOrNull()
+        return@transaction select { id eq uuid }.firstOrNull() != null
     }
 
     fun cacheProfile(playerProfile: PlayerProfile) =
@@ -83,10 +84,11 @@ object UserCacheTable : Table("ProfileCache") {
                 val username = playerProfile.name
                 if (uuid == null || username == null) return@async
                 if (!playerProfile.hasTextures()) {
+                    Logger.getAnonymousLogger().info("Profile for $username has no textures!")
                     return@async
                 }
                 transaction {
-                    if (anyForId(uuid) == null) {
+                    if (!anyForId(uuid)) {
                         insert {
                             it[id] = uuid
                             it[name] = username
