@@ -15,11 +15,10 @@ class Main : JavaPlugin() {
         saveDefaultConfig()
         Database.connect(HikariDataSource().apply {
             jdbcUrl = config.getString("database.url").replace("\$dataFolder", dataFolder.absolutePath)
-            driverClassName = config.getString("database.driver")
             username = config.getString("database.username", "root")
             password = config.getString("database.password", "")
         })
-        TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+        TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_READ_COMMITTED
         transaction {
             SchemaUtils.createMissingTablesAndColumns(UserCacheTable)
         }
