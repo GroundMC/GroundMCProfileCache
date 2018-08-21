@@ -90,6 +90,7 @@ object UserCacheTable : Table("ProfileCache") {
                 }
                 transaction {
                     if (!anyForId(uuid)) {
+                        println("Caching new $username")
                         insert {
                             it[id] = uuid
                             it[name] = username
@@ -97,6 +98,7 @@ object UserCacheTable : Table("ProfileCache") {
                             it[expire] = DateTime.now().plusHours(2)
                         }
                     } else {
+                        println("Updating $username...")
                         update({ id eq uuid }) {
                             it[name] = username
                             it[properties] = playerProfile.properties
