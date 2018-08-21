@@ -41,13 +41,9 @@ object UserCacheTable : Table("ProfileCache") {
     private object UserCacheLoader : CacheLoader<String, ResultRow>() {
         @Throws(NullPointerException::class)
         override fun load(key: String): ResultRow {
-            val row = transaction {
+            return transaction {
                 return@transaction select { (name eq key) and (expire greater DateTime.now()) }.firstOrNull()
-            }
-            if (row != null) {
-                return row
-            }
-            throw NullPointerException()
+            } ?: throw NullPointerException()
         }
 
         override fun loadAll(keys: Iterable<String>): Map<String, ResultRow> {
@@ -83,18 +79,11 @@ object UserCacheTable : Table("ProfileCache") {
                 val username = playerProfile.name
                 if (uuid == null || username == null) return@async
                 if (!playerProfile.hasTextures()) {
-                    println("No textures for $username")
                     return@async
                 } else {
-                    println("Caching $username...")
-                    println("UUID: $uuid")
-                    println("Name: $username")
-                    println("Properties: ${playerProfile.properties}")
-                    println("JSON: ${gson.toJson(playerProfile.properties)}")
                 }
                 transaction {
                     if (!anyForId(uuid)) {
-                        println("Caching new $username")
                         insert {
                             it[id] = uuid
                             it[name] = username
@@ -102,7 +91,6 @@ object UserCacheTable : Table("ProfileCache") {
                             it[expire] = DateTime.now().plusHours(2)
                         }
                     } else {
-                        println("Updating $username...")
                         update({ id eq uuid }) {
                             it[name] = username
                             it[properties] = playerProfile.properties
