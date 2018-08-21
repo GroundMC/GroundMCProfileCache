@@ -6,6 +6,7 @@ import com.destroystokyo.paper.event.profile.PreFillProfileEvent
 import com.destroystokyo.paper.event.profile.PreLookupProfileEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import java.util.logging.Logger
 
 @Suppress("unused")
 object ProfileListener : Listener {
@@ -29,11 +30,13 @@ object ProfileListener : Listener {
 
     @EventHandler
     fun storeCachedProfile(event: LookupProfileEvent) {
+        Logger.getAnonymousLogger().info("Cached ${event.playerProfile.name}")
         UserCacheTable.cacheProfile(event.playerProfile)
     }
 
     @EventHandler
     fun storeCachedProfile(event: FillProfileEvent) {
+        Logger.getAnonymousLogger().info("Cached ${event.playerProfile.name}")
         UserCacheTable.cacheProfile(event.playerProfile)
     }
 }
