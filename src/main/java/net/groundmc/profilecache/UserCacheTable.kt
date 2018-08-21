@@ -83,7 +83,10 @@ object UserCacheTable : Table("ProfileCache") {
                 val username = playerProfile.name
                 if (uuid == null || username == null) return@async
                 if (!playerProfile.hasTextures()) {
+                    println("No textures for $username")
                     return@async
+                } else {
+                    println("Caching $username...")
                 }
                 transaction {
                     if (!anyForId(uuid)) {
