@@ -26,7 +26,7 @@ object UserCacheTable : Table("ProfileCache") {
 
     val name = varchar("username", 255).primaryKey()
 
-    val id = uuid("id").index()
+    val id = uuid("id").uniqueIndex()
 
     val properties = properties("profile", 4096)
 
