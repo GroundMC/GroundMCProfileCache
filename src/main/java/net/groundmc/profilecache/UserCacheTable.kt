@@ -87,6 +87,10 @@ object UserCacheTable : Table("ProfileCache") {
                     return@async
                 } else {
                     println("Caching $username...")
+                    println("UUID: $uuid")
+                    println("Name: $username")
+                    println("Properties: ${playerProfile.properties}")
+                    println("JSON: ${gson.toJson(playerProfile.properties)}")
                 }
                 transaction {
                     if (!anyForId(uuid)) {
