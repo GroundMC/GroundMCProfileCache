@@ -102,9 +102,6 @@ object UserCacheTable : Table("ProfileCache") {
                             it[expire] = DateTime.now().plusHours(2)
                         }
                     }
-                    Users.update({ Users.id eq uuid }) {
-                        it[Users.lastName] = username
-                    }
                     commit()
                 }
             }
