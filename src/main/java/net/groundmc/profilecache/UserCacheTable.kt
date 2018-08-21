@@ -100,6 +100,7 @@ object UserCacheTable : Table("ProfileCache") {
                             it[expire] = DateTime.now().plusHours(2)
                         }
                     }
+                    println(playerProfile)
                     commit()
                     userCache.refresh(username)
                 }
