@@ -5,7 +5,6 @@ import com.destroystokyo.paper.profile.ProfileProperty
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
@@ -14,21 +13,24 @@ import kotlinx.coroutines.experimental.async
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
+import java.lang.reflect.Type
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object UserCacheTable : Table("ProfileCache") {
 
-    private val gson = GsonBuilder()
-            .registerTypeAdapter(TypeToken.getParameterized(Set::class.java, ProfileProperty::class.java).type, ProfilePropertyTypeAdapter())
+    val profilePropertyType: Type = TypeToken.getParameterized(Set::class.java, ProfileProperty::class.java).type
+
+    val gson = GsonBuilder()
+            .registerTypeAdapter(profilePropertyType, ProfilePropertyTypeAdapter())
             .create()
 
     val name = varchar("username", 255).primaryKey()
 
     val id = uuid("id").uniqueIndex()
 
-    val properties = properties("profile", 4096)
+    val properties = varchar("profile", 4096)
 
     private val expire = datetime("expire").index()
 
@@ -86,13 +88,13 @@ object UserCacheTable : Table("ProfileCache") {
                         insert {
                             it[id] = uuid
                             it[name] = username
-                            it[properties] = playerProfile.properties
+                            it[properties] = gson.toJson(playerProfile.properties)
                             it[expire] = DateTime.now().plusHours(2)
                         }
                     } else {
                         update({ id eq uuid }) {
                             it[name] = username
-                            it[properties] = playerProfile.properties
+                            it[properties] = gson.toJson(playerProfile.properties)
                             it[expire] = DateTime.now().plusHours(2)
                         }
                     }
@@ -100,29 +102,6 @@ object UserCacheTable : Table("ProfileCache") {
                     userCache.refresh(username)
                 }
             }
-
-    private fun properties(name: String, length: Int, collate: String? = null) = registerColumn<Set<ProfileProperty>>(name, PropertySetColumnType(length, collate))
-
-    class PropertySetColumnType(length: Int, collate: String?) : VarCharColumnType(length, collate) {
-        override fun nonNullValueToString(value: Any): String {
-            return when (value) {
-                is Set<*> -> gson.toJson(value)
-                else -> super.nonNullValueToString(value)
-            }
-        }
-
-        override fun valueFromDB(value: Any): Any {
-            if (value is String) {
-                return JsonParser().parse(value).asJsonArray
-                        .map {
-                            with(it.asJsonObject) {
-                                ProfileProperty(get("name").asString, get("value").asString, if (has("signature")) get("signature").asString else null)
-                            }
-                        }.toSet()
-            }
-            return super.valueFromDB(value)
-        }
-    }
 
     private class ProfilePropertyTypeAdapter : TypeAdapter<Set<ProfileProperty>>() {
         override fun write(out: JsonWriter, value: Set<ProfileProperty>) {
