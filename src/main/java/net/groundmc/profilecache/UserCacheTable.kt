@@ -87,6 +87,7 @@ object UserCacheTable : Table("ProfileCache") {
                     println("New: $new")
                     if (new) {
                         transaction {
+                            addLogger(StdOutSqlLogger)
                             insert {
                                 it[id] = uuid
                                 it[name] = username
@@ -97,6 +98,7 @@ object UserCacheTable : Table("ProfileCache") {
                         }
                     } else {
                         transaction {
+                            addLogger(StdOutSqlLogger)
                             update({ id eq uuid }) {
                                 it[name] = username
                                 it[properties] = playerProfile.properties
