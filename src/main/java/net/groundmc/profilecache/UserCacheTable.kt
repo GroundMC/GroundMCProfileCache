@@ -71,7 +71,7 @@ object UserCacheTable : Table("ProfileCache") {
                     }
 
     private fun anyForId(uuid: UUID) = transaction {
-        return@transaction select { id eq uuid }.firstOrNull() != null
+        return@transaction select { id eq uuid }.count() > 0
     }
 
     fun cacheProfile(playerProfile: PlayerProfile) =
@@ -98,7 +98,6 @@ object UserCacheTable : Table("ProfileCache") {
                             it[expire] = DateTime.now().plusHours(2)
                         }
                     }
-                    println(currentStatement?.warnings)
                     commit()
                     userCache.refresh(username)
                 }
