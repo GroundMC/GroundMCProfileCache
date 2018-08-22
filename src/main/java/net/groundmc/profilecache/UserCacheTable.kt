@@ -49,6 +49,7 @@ object UserCacheTable : Table("ProfileCache") {
 
         override fun loadAll(keys: Iterable<String>): Map<String, ResultRow> {
             return transaction {
+                addLogger(StdOutSqlLogger)
                 return@transaction select { (name inList keys) and (expire greater DateTime.now()) }.associateBy { it[name] }
             }
         }
@@ -63,6 +64,7 @@ object UserCacheTable : Table("ProfileCache") {
     fun forId(uuid: UUID) =
             userCache.asMap().values.firstOrNull { it[id] == uuid }
                     ?: transaction {
+                        addLogger(StdOutSqlLogger)
                         val row = select { (id eq uuid) and (expire greater DateTime.now()) }.firstOrNull()
                         if (row != null) {
                             userCache.put(row[name], row)
@@ -71,6 +73,7 @@ object UserCacheTable : Table("ProfileCache") {
                     }
 
     private fun anyForId(uuid: UUID) = transaction {
+        addLogger(StdOutSqlLogger)
         return@transaction select { id eq uuid }.count() > 0
     }
 
