@@ -70,8 +70,9 @@ object UserCacheTable : Table("ProfileCache") {
                         row
                     }
 
-    private fun Transaction.anyForId(uuid: UUID) = select { id eq uuid }.count() > 0
-
+    private fun anyForId(uuid: UUID) = transaction {
+        return@transaction select { id eq uuid }.count() > 0
+    }
 
     fun cacheProfile(playerProfile: PlayerProfile) =
             async {
@@ -88,13 +89,13 @@ object UserCacheTable : Table("ProfileCache") {
                             it[id] = uuid
                             it[name] = username
                             it[properties] = playerProfile.properties
-                            it[expire] = DateTime.now().plusHours(2)
+                            // it[expire] = DateTime.now().plusHours(2)
                         }
                     } else {
                         update({ id eq uuid }) {
                             it[name] = username
                             it[properties] = playerProfile.properties
-                            it[expire] = DateTime.now().plusHours(2)
+//                            it[expire] = DateTime.now().plusHours(2)
                         }
                     }
                     commit()
