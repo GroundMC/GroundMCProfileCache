@@ -42,9 +42,8 @@ object UserCacheTable : Table("ProfileCache") {
         @Throws(NullPointerException::class)
         override fun load(key: String): ResultRow {
             return transaction {
-                return@transaction select { (name eq key) and (expire greater DateTime.now()) }.firstOrNull().also {
-                    println(it.toString())
-                }
+                addLogger(StdOutSqlLogger)
+                return@transaction select { (name eq key) and (expire greater DateTime.now()) }.firstOrNull()
             } ?: throw NullPointerException()
         }
 
@@ -84,6 +83,7 @@ object UserCacheTable : Table("ProfileCache") {
                     return@async
                 }
                 transaction {
+                    addLogger(StdOutSqlLogger)
                     if (!anyForId(uuid)) {
                         insert {
                             it[id] = uuid
