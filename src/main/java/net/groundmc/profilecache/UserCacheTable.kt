@@ -70,9 +70,8 @@ object UserCacheTable : Table("ProfileCache") {
                         row
                     }
 
-    private fun anyForId(uuid: UUID) = transaction {
-        return@transaction select { id eq uuid }.count() > 0
-    }
+    private fun Transaction.anyForId(uuid: UUID) = select { id eq uuid }.count() > 0
+
 
     fun cacheProfile(playerProfile: PlayerProfile) =
             async {
