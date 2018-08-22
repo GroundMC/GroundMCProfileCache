@@ -85,28 +85,22 @@ object UserCacheTable : Table("ProfileCache") {
                     addLogger(StdOutSqlLogger)
                     val new = !anyForId(uuid)
                     println("New: $new")
-                    if (new) {
-                        transaction {
-                            addLogger(StdOutSqlLogger)
-                            insert {
-                                it[id] = uuid
-                                it[name] = username
-                                it[properties] = playerProfile.properties
-                                it[expire] = DateTime.now().plusHours(2)
-                            }
-                            commit()
+                    deleteIgnoreWhere { id eq uuid }
+//                    if (new) {
+                    insert {
+                        it[id] = uuid
+                        it[name] = username
+                        it[properties] = playerProfile.properties
+                        it[expire] = DateTime.now().plusHours(2)
                         }
-                    } else {
-                        transaction {
-                            addLogger(StdOutSqlLogger)
-                            update({ id eq uuid }) {
-                                it[name] = username
-                                it[properties] = playerProfile.properties
-                                it[expire] = DateTime.now().plusHours(2)
-                            }
-                            commit()
-                        }
-                    }
+//                    } else {
+//                        update({ id eq uuid }) {
+//                            it[name] = username
+//                            it[properties] = playerProfile.properties
+//                            it[expire] = DateTime.now().plusHours(2)
+//                        }
+//                    }
+                    commit()
                     userCache.refresh(username)
                 }
             }
