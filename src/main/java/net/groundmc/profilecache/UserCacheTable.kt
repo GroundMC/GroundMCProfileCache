@@ -93,6 +93,7 @@ object UserCacheTable : Table("ProfileCache") {
                                 it[properties] = playerProfile.properties
                                 it[expire] = DateTime.now().plusHours(2)
                             }
+                            commit()
                         }
                     } else {
                         transaction {
@@ -101,9 +102,9 @@ object UserCacheTable : Table("ProfileCache") {
                                 it[properties] = playerProfile.properties
                                 it[expire] = DateTime.now().plusHours(2)
                             }
+                            commit()
                         }
                     }
-                    commit()
                     userCache.refresh(username)
                 }
             }
