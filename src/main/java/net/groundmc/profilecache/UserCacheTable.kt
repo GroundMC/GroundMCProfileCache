@@ -14,7 +14,6 @@ import kotlinx.coroutines.experimental.async
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -82,9 +81,6 @@ object UserCacheTable : Table("ProfileCache") {
                 if (!playerProfile.hasTextures()) {
                     return@async
                 }
-                println(DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss.SSSSSS").withLocale(Locale.ROOT)
-                        .print(DateTime.now().plusHours(2)))
-                println(DateTime.now())
                 transaction {
                     if (!anyForId(uuid)) {
                         insert {
