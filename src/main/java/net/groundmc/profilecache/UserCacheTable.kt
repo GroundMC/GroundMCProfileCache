@@ -1,36 +1,24 @@
 package net.groundmc.profilecache
 
 import com.destroystokyo.paper.profile.PlayerProfile
-import com.destroystokyo.paper.profile.ProfileProperty
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
-import com.google.gson.GsonBuilder
-import com.google.gson.TypeAdapter
-import com.google.gson.reflect.TypeToken
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonWriter
 import kotlinx.coroutines.experimental.async
+import net.groundmc.extensions.exposed.profilePropertySet
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
-import java.lang.reflect.Type
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object UserCacheTable : Table("ProfileCache") {
 
-    val profilePropertyType: Type = TypeToken.getParameterized(Set::class.java, ProfileProperty::class.java).type
-
-    val gson = GsonBuilder()
-            .registerTypeAdapter(profilePropertyType, ProfilePropertyTypeAdapter())
-            .create()
-
     val name = varchar("username", 255).primaryKey()
 
     val id = uuid("id").uniqueIndex()
 
-    val properties = varchar("profile", 4096)
+    val properties = profilePropertySet("profile", 4096)
 
     private val expire = datetime("expire").index()
 
@@ -88,13 +76,13 @@ object UserCacheTable : Table("ProfileCache") {
                         insert {
                             it[id] = uuid
                             it[name] = username
-                            it[properties] = gson.toJson(playerProfile.properties)
+                            it[properties] = playerProfile.properties
                             it[expire] = DateTime.now().plusHours(2)
                         }
                     } else {
                         update({ id eq uuid }) {
                             it[name] = username
-                            it[properties] = gson.toJson(playerProfile.properties)
+                            it[properties] = playerProfile.properties
                             it[expire] = DateTime.now().plusHours(2)
                         }
                     }
@@ -102,50 +90,5 @@ object UserCacheTable : Table("ProfileCache") {
                     userCache.refresh(username)
                 }
             }
-
-    private class ProfilePropertyTypeAdapter : TypeAdapter<Set<ProfileProperty>>() {
-        override fun write(out: JsonWriter, value: Set<ProfileProperty>) {
-            out.beginArray()
-            value.forEach {
-                out.beginObject().name("name").value(it.name)
-                        .name("value").value(it.value)
-                if (it.isSigned) {
-                    out.name("signature").value(it.signature)
-                }
-                out.endObject()
-            }
-            out.endArray()
-        }
-
-        override fun read(reader: JsonReader): Set<ProfileProperty> {
-            val set = mutableSetOf<ProfileProperty>()
-
-            reader.beginArray()
-            while (reader.hasNext()) {
-                reader.beginObject()
-                val builder = ProfilePropertyBuilder()
-                while (reader.hasNext()) {
-                    when (reader.nextName()) {
-                        "name" -> builder.name = reader.nextString()
-                        "value" -> builder.value = reader.nextString()
-                        "signature" -> builder.signature = reader.nextString()
-                        else -> reader.skipValue()
-                    }
-                }
-                set += builder.build() ?: continue
-                reader.endObject()
-            }
-            reader.endArray()
-            return set
-        }
-    }
-
-    private class ProfilePropertyBuilder(var name: String? = null, var value: String? = null, var signature: String? = null) {
-        fun build() = if (name != null || value != null) {
-            ProfileProperty(name!!, value!!, signature)
-        } else {
-            null
-        }
-    }
 
 }
