@@ -45,7 +45,7 @@
             <groupId>com.github.gianttreelp</groupId>
             <artifactId>bukkit-exposed-extensions</artifactId>
             <version>1.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>

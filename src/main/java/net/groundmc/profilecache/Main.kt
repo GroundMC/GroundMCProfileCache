@@ -22,5 +22,4 @@ class Main : JavaPlugin() {
         }
         Bukkit.getPluginManager().registerEvents(ProfileListener, this)
     }
-
 }
