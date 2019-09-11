@@ -9,17 +9,23 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class Main : JavaPlugin() {
 
-    override fun onEnable() {
-        saveDefaultConfig()
-        Database.connect(HikariDataSource().apply {
+    val datasource = HikariDataSource().apply {
             jdbcUrl = config.getString("database.url").replace("\$dataFolder", dataFolder.absolutePath)
             username = config.getString("database.username", "root")
             password = config.getString("database.password", "")
             transactionIsolation = "TRANSACTION_READ_COMMITTED"
-        })
+    }
+
+    override fun onEnable() {
+        saveDefaultConfig()
+        Database.connect(datasource)
         transaction {
             SchemaUtils.createMissingTablesAndColumns(UserCacheTable)
         }
         Bukkit.getPluginManager().registerEvents(ProfileListener, this)
+    }
+
+    override fun onDisable() {
+        datasource.close()
     }
 }
