@@ -103,12 +103,14 @@
                     <minimizeJar>true</minimizeJar>
                     <relocations>
                       <relocation>
+                        <pattern>.</pattern>
                         <includes>
                           <include>org.jetbrains</include>
+                          <include>kotlin</include>
                           <include>com.zaxxer</include>
                           <include>kotlinx</include>
                           <include>org.joda.time</include>
-                          <include>com.google.common.cache</include>
+                          <include>org.slf4j</include>
                         </includes>
                         <shadedPattern>net.groundmc.profilecache.relocation</shadedPattern>
                       </relocation>
