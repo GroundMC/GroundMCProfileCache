@@ -40,12 +40,12 @@
             <artifactId>exposed</artifactId>
             <version>0.17.6</version>
             <scope>compile</scope>
-            <exludes>
-              <exclude>
+            <exclusions>
+              <exclusion>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-              </exclude>
-            </exludes>
+              </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.gianttreelp</groupId>
