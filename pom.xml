@@ -109,7 +109,7 @@
                     <minimizeJar>true</minimizeJar>
                     <relocations>
                       <relocation>
-                        <pattern>.*</pattern>
+                        <pattern></pattern>
                         <shadedPattern>net.groundmc.profilecache.relocation</shadedPattern>
                         <includes>
                           <include>org.jetbrains.**</include>
