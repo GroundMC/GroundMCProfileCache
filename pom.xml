@@ -110,7 +110,7 @@
                     <relocations>
                       <relocation>
                         <pattern></pattern>
-                        <shadedPattern>net.groundmc.profilecache.relocation</shadedPattern>
+                        <shadedPattern>net.groundmc.profilecache.relocation.</shadedPattern>
                         <includes>
                           <include>org.jetbrains.**</include>
                           <include>kotlin.**</include>
