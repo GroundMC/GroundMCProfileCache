@@ -51,7 +51,7 @@
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>1.12.2-R0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
@@ -101,6 +101,18 @@
                 <version>3.2.1</version>
                 <configuration>
                     <minimizeJar>true</minimizeJar>
+                    <relocations>
+                      <relocation>
+                        <includes>
+                          <include>org.jetbrains</include>
+                          <include>com.zaxxer</include>
+                          <include>kotlinx</include>
+                          <include>org.joda.time</include>
+                          <include>com.google.common.cache</include>
+                        </includes>
+                        <shadedPattern>net.groundmc.profilecache.relocation</shadedPattern>
+                      </relocation>
+                    </relocations>
                 </configuration>
                 <executions>
                     <execution>
