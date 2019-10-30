@@ -14,6 +14,7 @@ class Main : JavaPlugin() {
             username = config.getString("database.username", "root")
             password = config.getString("database.password", "")
             transactionIsolation = "TRANSACTION_READ_COMMITTED"
+            maximumPoolSize = 2
     }
 
     override fun onEnable() {
