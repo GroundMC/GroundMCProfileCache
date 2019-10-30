@@ -109,7 +109,8 @@
                     <minimizeJar>true</minimizeJar>
                     <relocations>
                       <relocation>
-                        <pattern>.</pattern>
+                        <pattern>**</pattern>
+                        <shadedPattern>net.groundmc.profilecache.relocation</shadedPattern>
                         <includes>
                           <include>org.jetbrains.**</include>
                           <include>kotlin.**</include>
@@ -118,7 +119,6 @@
                           <include>org.joda.time.**</include>
                           <include>org.slf4j.**</include>
                         </includes>
-                        <shadedPattern>net.groundmc.profilecache.relocation</shadedPattern>
                       </relocation>
                     </relocations>
                 </configuration>
