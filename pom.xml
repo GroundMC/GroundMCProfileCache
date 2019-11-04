@@ -6,7 +6,7 @@
 
     <groupId>net.groundmc</groupId>
     <artifactId>GroundMCProfileCache</artifactId>
-    <version>1.1-b${env.BUILD_NUMBER}</version>
+    <version>1.2-b${env.BUILD_NUMBER}</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
