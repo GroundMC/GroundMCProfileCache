@@ -1,9 +1,10 @@
 package net.groundmc.profilecache
 
 import com.destroystokyo.paper.profile.PlayerProfile
+import com.destroystokyo.paper.profile.ProfileProperty
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.launch
 import net.groundmc.extensions.exposed.profilePropertySet
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -12,7 +13,7 @@ import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-object UserCacheTable : Table("ProfileCache") {
+class UserCacheTable(private val main: Main) : Table("ProfileCache") {
 
     val name = varchar("username", 255).primaryKey()
 
@@ -26,19 +27,24 @@ object UserCacheTable : Table("ProfileCache") {
             .refreshAfterWrite(5, TimeUnit.MINUTES)
             .expireAfterAccess(20, TimeUnit.MINUTES)
             .maximumSize(2500)
-            .build(CacheLoader.asyncReloading(UserCacheLoader, Executors.newCachedThreadPool()))
+            .build(CacheLoader.asyncReloading(UserCacheLoader(), Executors.newCachedThreadPool()))
 
-    private object UserCacheLoader : CacheLoader<String, ResultRow>() {
+    private inner class UserCacheLoader : CacheLoader<String, UserCacheEntry>() {
         @Throws(NullPointerException::class)
-        override fun load(key: String): ResultRow {
+        override fun load(key: String): UserCacheEntry {
             return transaction {
-                return@transaction select { (name eq key) and (expire greater DateTime.now()) }.firstOrNull()
+                return@transaction select { (name eq key) and (expire greater DateTime.now()) }
+                        .map { UserCacheEntry(it[name], it[id], it[properties], it[expire]) }
+                        .firstOrNull()
             } ?: throw NullPointerException()
+
         }
 
-        override fun loadAll(keys: Iterable<String>): Map<String, ResultRow> {
+        override fun loadAll(keys: Iterable<String>): Map<String, UserCacheEntry> {
             return transaction {
-                return@transaction select { (name inList keys) and (expire greater DateTime.now()) }.associateBy { it[name] }
+                return@transaction select { (name inList keys) and (expire greater DateTime.now()) }
+                        .map { UserCacheEntry(it[name], it[id], it[properties], it[expire]) }
+                        .associateBy { it.name }
             }
         }
     }
@@ -50,13 +56,15 @@ object UserCacheTable : Table("ProfileCache") {
     }
 
     fun forId(uuid: UUID) =
-            userCache.asMap().values.firstOrNull { it[id] == uuid }
+            userCache.asMap().values.firstOrNull { it.id == uuid }
                     ?: transaction {
-                        val row = select { (id eq uuid) and (expire greater DateTime.now()) }.firstOrNull()
-                        if (row != null) {
-                            userCache.put(row[name], row)
+                        val cacheEntry = select { (id eq uuid) and (expire greater DateTime.now()) }
+                                .map { UserCacheEntry(it[name], it[id], it[properties], it[expire]) }
+                                .firstOrNull()
+                        if (cacheEntry != null) {
+                            userCache.put(cacheEntry.name, cacheEntry)
                         }
-                        row
+                        cacheEntry
                     }
 
     private fun anyForId(uuid: UUID) = transaction {
@@ -64,12 +72,12 @@ object UserCacheTable : Table("ProfileCache") {
     }
 
     fun cacheProfile(playerProfile: PlayerProfile) =
-            async {
+            main.scope.launch {
                 val uuid = playerProfile.id
                 val username = playerProfile.name
-                if (uuid == null || username == null) return@async
+                if (uuid == null || username == null) return@launch
                 if (!playerProfile.hasTextures()) {
-                    return@async
+                    return@launch
                 }
                 transaction {
                     if (!anyForId(uuid)) {
@@ -90,5 +98,12 @@ object UserCacheTable : Table("ProfileCache") {
                     userCache.refresh(username)
                 }
             }
+
+    data class UserCacheEntry(
+            val name: String,
+            val id: UUID,
+            val properties: Set<ProfileProperty>,
+            val expire: DateTime
+    )
 
 }
