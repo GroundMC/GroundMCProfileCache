@@ -14,11 +14,11 @@ class Main : JavaPlugin() {
     val scope = CoroutineScope(Dispatchers.Default)
 
     private val datasource = HikariDataSource().apply {
-            jdbcUrl = config.getString("database.url").replace("\$dataFolder", dataFolder.absolutePath)
-            username = config.getString("database.username", "root")
-            password = config.getString("database.password", "")
-            transactionIsolation = "TRANSACTION_READ_COMMITTED"
-            maximumPoolSize = 2
+        jdbcUrl = config.getString("database.url").replace("\$dataFolder", dataFolder.absolutePath)
+        username = config.getString("database.username", "root")
+        password = config.getString("database.password", "")
+        transactionIsolation = "TRANSACTION_READ_COMMITTED"
+        maximumPoolSize = 2
     }
 
     override fun onEnable() {
